@@ -1,216 +1,305 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
+    "title": "Meetstream Bot API",
+    "version": "1.0.0",
+    "description": "API documentation for managing Meetstream bots. All endpoints require API Key authentication."
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://api.example.com/v1",
+      "description": "Replace with your actual API base URL (e.g., from process.env.NEXT_PUBLIC_API_URL)"
     }
   ],
+  "tags": [
+    {
+      "name": "Bot Endpoints",
+      "description": "Endpoints for managing Meetstream bots."
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "All API endpoints are authenticated using API Keys. The key should be included in the 'Authorization' header, prefixed with 'Token '. Example: 'Authorization: Token YOUR_API_KEY'."
+      }
+    }
+  },
   "security": [
     {
-      "bearerAuth": []
+      "ApiKeyAuth": []
     }
   ],
   "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+    "/bots/create_bot": {
+      "post": {
+        "tags": ["Bot Endpoints"],
+        "summary": "Create bot",
+        "operationId": "createBot",
+        "description": "Creates a new bot instance to join a meeting.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "meeting_link": "",
+                "audio_required": true,
+                "video_required": false,
+                "bot_message": "",
+                "live_audio_required": {},
+                "live_transcription_required": {},
+                "transcription": {
+                  "deepgram": {
+                    "model": "",
+                    "language": ""
                   }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
+                },
+                "custom_attributes": {
+                  "tag": "",
+                  "sample": ""
+                },
+                "callback_url": ""
               }
             }
           }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
         },
         "responses": {
-          "200": {
-            "description": "plant response",
+          "201": {
+            "description": "Bot creation initiated successfully. Returns { bot_id: string }.",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                "example": {
+                  "bot_id": "string"
                 }
               }
             }
           },
           "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
+            "description": "Bad Request (e.g., missing fields, invalid meeting link)."
+          },
+          "401": {
+            "description": "Unauthorized (Invalid API Key)."
+          },
+          "500": {
+            "description": "Internal Server Error."
           }
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/bots/{bot_id}/status": {
+      "get": {
+        "tags": ["Bot Endpoints"],
+        "summary": "Get Bot Status",
+        "operationId": "getBotStatus",
+        "description": "Retrieves the current status of a specific bot.",
         "parameters": [
           {
-            "name": "id",
+            "name": "bot_id",
             "in": "path",
-            "description": "ID of plant to delete",
             "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
+            "description": "The unique identifier of the bot.",
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "Returns the bot status.",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
+                "example": {
+                  "status": "in_meeting",
+                  "message": "Bot is currently in the meeting."
                 }
               }
             }
-          }
-        }
-      }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
-        "requestBody": {
-          "description": "Plant added to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
+          "401": { "description": "Unauthorized (Invalid API Key)." },
+          "404": { "description": "Bot not found." },
+          "500": { "description": "Internal Server Error." }
         }
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+    "/bots/{bot_id}/get_audio": {
+      "get": {
+        "tags": ["Bot Endpoints"],
+        "summary": "Get Bot Audio",
+        "operationId": "getBotAudio",
+        "description": "Retrieves the recorded audio file for a specific bot, if available.",
+        "parameters": [
+          {
+            "name": "bot_id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the bot.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the audio file directly (e.g., Content-Type: audio/mpeg). The filename is typically the bot_id.",
+            "content": {
+              "audio/mpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized (Invalid API Key)." },
+          "404": { "description": "Bot not found or audio not available/ready." },
+          "500": { "description": "Internal Server Error." }
+        }
+      }
+    },
+    "/bots/{bot_id}/get_transcript": {
+      "get": {
+        "tags": ["Bot Endpoints"],
+        "summary": "Get Bot Transcript",
+        "operationId": "getBotTranscript",
+        "description": "Retrieves the transcript file for a specific bot, if available.",
+        "parameters": [
+          {
+            "name": "bot_id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the bot.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the transcript file (typically JSON).",
+            "content": {
+              "application/json": {
+                "example": {
+                  "transcript": [
+                    { "speaker": "Alice", "timestamp": "00:00:12", "text": "Hello everyone, thanks for joining." },
+                    { "speaker": "Bob",   "timestamp": "00:00:15", "text": "Hi Alice!" }
+                  ],
+                  "summary": "Brief discussion about project status."
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized (Invalid API Key)." },
+          "404": { "description": "Bot not found or transcript not available/ready." },
+          "500": { "description": "Internal Server Error." }
+        }
+      }
+    },
+    "/bots/{bot_id}/remove_bot": {
+      "get": {
+        "tags": ["Bot Endpoints"],
+        "summary": "Remove bot",
+        "operationId": "removeBot",
+        "description": "Removes a bot from its meeting and deletes its associated data.",
+        "parameters": [
+          {
+            "name": "bot_id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the bot.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bot removed successfully.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Bot bot_123 has been removed successfully."
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized (Invalid API Key)." },
+          "404": { "description": "Bot not found." },
+          "500": { "description": "Internal Server Error." }
+        }
+      }
+    },
+    "/transcript/{transcript_id}/get_transcript": {
+      "get": {
+        "tags": ["Bot Endpoints"],
+        "summary": "Get Transcript",
+        "operationId": "getTranscript",
+        "description": "Retrieves the detailed transcript for a specific meeting, including speaker information and word-level details.",
+        "parameters": [
+          {
+            "name": "transcript_id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the transcript.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the detailed transcript with speaker information and word-level details.",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "speaker": "John Wick",
+                    "transcript": "Hello? Hey there. Mic testing. +1, 23.",
+                    "start_time": 1.04,
+                    "end_time": 5.84,
+                    "words": [
+                      {
+                        "word": "hello",
+                        "start": 1.04,
+                        "end": 1.76,
+                        "confidence": 0.81,
+                        "speaker": "John Wick",
+                        "punctuated_word": "Hello?",
+                        "speech_confidence": 1.0
+                      }
+                    ],
+                    "speaker_confidence": 1.0
+                  }
+                ]
+              }
+            }
+          },
+          "401": { "description": "Unauthorized (Invalid API Key)." },
+          "404": { "description": "Transcript not found." },
+          "500": { "description": "Internal Server Error." }
+        }
+      }
+    },
+    "/bots/{bot_id}/get_manifest": {
+      "get": {
+        "tags": ["Bot Endpoints"],
+        "summary": "Get Bot Manifest",
+        "operationId": "getBotManifest",
+        "description": "Retrieves the manifest information for a specific bot.",
+        "parameters": [
+          {
+            "name": "bot_id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the bot.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the bot manifest information.",
+            "content": {
+              "application/json": {
+                "example": {}
+              }
+            }
+          },
+          "401": { "description": "Unauthorized (Invalid API Key)." },
+          "404": { "description": "Bot not found." },
+          "500": { "description": "Internal Server Error." }
+        }
       }
     }
   }

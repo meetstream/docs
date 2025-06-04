@@ -44,12 +44,15 @@
             ]
           },
           {
-            "group": "Endpoint Examples",
+            "group": "Bot Endpoints",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/endpoint/create-bot",
+              "api-reference/endpoint/get-bot-status",
+              "api-reference/endpoint/get-bot-audio",
+              "api-reference/endpoint/get-bot-transcript",
+              "api-reference/endpoint/remove-bot",
+              "api-reference/endpoint/get-transcript",
+              "api-reference/endpoint/get-bot-manifest"
             ]
           }
         ]
