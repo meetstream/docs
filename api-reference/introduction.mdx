@@ -1,58 +1,33 @@
 ---
 title: 'Introduction'
-description: 'Introduction to the Meetstream Bot API documentation.'
+description: 'Overview of the Meetstream Bot API.'
 ---
 
 <Note>
-  This section provides an overview of the Meetstream Bot API. 
-  The detailed endpoint documentation is generated from an OpenAPI specification.
+  Welcome to the Meetstream Bot API documentation. Here you'll find everything you need to manage and interact with meeting bots using our unified API.
 </Note>
 
-## Welcome
+## Overview
 
-The Meetstream Bot API allows you to manage and interact with bots in meetings. 
-API documentation can be built using [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) or [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). 
-This documentation uses an OpenAPI specification.
+The Meetstream Bot API enables you to programmatically create, control, and monitor meeting bots across major platforms. This documentation is generated from an OpenAPI specification and provides detailed information on all available endpoints.
 
 <Card
   title="Meetstream Bot API Specification"
   icon="zap"
-  href="openapi.json" 
+  href="openapi.json"
 >
-  View the OpenAPI specification file for the Bot API.
+  View the full OpenAPI specification for the Bot API.
 </Card>
 
 ## Authentication
 
-All API endpoints for the Meetstream Bot API are authenticated using API Keys.
+All API requests require authentication via API Key. Include your API key in the `Authorization` header, prefixed with `Token`.
 
-Your API key must be included in the `Authorization` header for every request, prefixed with `Token `.
-
-**Example Header:**
+**Header Example:**
 ```
 Authorization: Token YOUR_API_KEY
 ```
 
-This authentication mechanism is defined in the `openapi.json` specification under `components.securitySchemes` and applied globally via the `security` definition:
+You can generate and manage your API keys from your Meetstream dashboard.
 
-```json
-{
-  "components": {
-    "securitySchemes": {
-      "ApiKeyAuth": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "Authorization",
-        "description": "All API endpoints are authenticated using API Keys. The key should be included in the 'Authorization' header, prefixed with \'Token \'. Example: \'Authorization: Token YOUR_API_KEY\'."
-      }
-    }
-  },
-  "security": [
-    {
-      "ApiKeyAuth": []
-    }
-  ]
-}
-```
-
-Replace `YOUR_API_KEY` with your actual API key. You can manage your API keys from your Meetstream dashboard.
+Authentication is defined in the OpenAPI spec as an `ApiKeyAuth` security scheme, applied globally to all endpoints.

@@ -7,8 +7,8 @@
   },
   "servers": [
     {
-      "url": "https://api.example.com/v1",
-      "description": "Replace with your actual API base URL (e.g., from process.env.NEXT_PUBLIC_API_URL)"
+      "url": "https://api.meestream.ai/v1",
+      "description": "Meestream.ai API base URL"
     }
   ],
   "tags": [
