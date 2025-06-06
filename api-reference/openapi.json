@@ -25,6 +25,112 @@
         "name": "Authorization",
         "description": "All API endpoints are authenticated using API Keys. The key should be included in the 'Authorization' header, prefixed with 'Token '. Example: 'Authorization: Token YOUR_API_KEY'."
       }
+    },
+    "schemas": {
+      "CreateBotRequest": {
+        "type": "object",
+        "properties": {
+          "meeting_link": { "type": "string", "description": "Meeting URL to join." },
+          "audio_required": { "type": "boolean", "description": "Whether audio is required." },
+          "video_required": { "type": "boolean", "description": "Whether video is required." },
+          "bot_message": { "type": "string", "description": "Message for the bot to say on join." },
+          "live_audio_required": { "type": "object", "description": "Live audio streaming config." },
+          "live_transcription_required": { "type": "object", "description": "Live transcription config." },
+          "transcription": {
+            "type": "object",
+            "properties": {
+              "deepgram": {
+                "type": "object",
+                "properties": {
+                  "model": { "type": "string" },
+                  "language": { "type": "string" }
+                }
+              }
+            }
+          },
+          "custom_attributes": {
+            "type": "object",
+            "properties": {
+              "tag": { "type": "string" },
+              "sample": { "type": "string" }
+            }
+          },
+          "callback_url": { "type": "string", "description": "Callback URL for bot events." }
+        },
+        "required": ["meeting_link", "audio_required", "video_required"]
+      },
+      "CreateBotResponse": {
+        "type": "object",
+        "properties": {
+          "bot_id": { "type": "string", "description": "Unique identifier for the created bot." }
+        },
+        "required": ["bot_id"]
+      },
+      "GetBotStatusResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "description": "Current status of the bot." },
+          "message": { "type": "string", "description": "Status message." }
+        },
+        "required": ["status", "message"]
+      },
+      "GetBotTranscriptResponse": {
+        "type": "object",
+        "properties": {
+          "transcript": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "speaker": { "type": "string" },
+                "timestamp": { "type": "string" },
+                "text": { "type": "string" }
+              }
+            }
+          },
+          "summary": { "type": "string" }
+        }
+      },
+      "RemoveBotResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "message": { "type": "string" }
+        },
+        "required": ["success", "message"]
+      },
+      "GetTranscriptResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "speaker": { "type": "string" },
+            "transcript": { "type": "string" },
+            "start_time": { "type": "number" },
+            "end_time": { "type": "number" },
+            "words": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "word": { "type": "string" },
+                  "start": { "type": "number" },
+                  "end": { "type": "number" },
+                  "confidence": { "type": "number" },
+                  "speaker": { "type": "string" },
+                  "punctuated_word": { "type": "string" },
+                  "speech_confidence": { "type": "number" }
+                }
+              }
+            },
+            "speaker_confidence": { "type": "number" }
+          }
+        }
+      },
+      "GetBotManifestResponse": {
+        "type": "object",
+        "description": "Manifest information for a bot."
+      }
     }
   },
   "security": [
@@ -43,48 +149,22 @@
           "required": true,
           "content": {
             "application/json": {
-              "example": {
-                "meeting_link": "",
-                "audio_required": true,
-                "video_required": false,
-                "bot_message": "",
-                "live_audio_required": {},
-                "live_transcription_required": {},
-                "transcription": {
-                  "deepgram": {
-                    "model": "",
-                    "language": ""
-                  }
-                },
-                "custom_attributes": {
-                  "tag": "",
-                  "sample": ""
-                },
-                "callback_url": ""
-              }
+              "schema": { "$ref": "#/components/schemas/CreateBotRequest" }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Bot creation initiated successfully. Returns { bot_id: string }.",
+            "description": "Bot creation initiated successfully.",
             "content": {
               "application/json": {
-                "example": {
-                  "bot_id": "string"
-                }
+                "schema": { "$ref": "#/components/schemas/CreateBotResponse" }
               }
             }
           },
-          "400": {
-            "description": "Bad Request (e.g., missing fields, invalid meeting link)."
-          },
-          "401": {
-            "description": "Unauthorized (Invalid API Key)."
-          },
-          "500": {
-            "description": "Internal Server Error."
-          }
+          "400": { "description": "Bad Request (e.g., missing fields, invalid meeting link)." },
+          "401": { "description": "Unauthorized (Invalid API Key)." },
+          "500": { "description": "Internal Server Error." }
         }
       }
     },
@@ -108,10 +188,7 @@
             "description": "Returns the bot status.",
             "content": {
               "application/json": {
-                "example": {
-                  "status": "in_meeting",
-                  "message": "Bot is currently in the meeting."
-                }
+                "schema": { "$ref": "#/components/schemas/GetBotStatusResponse" }
               }
             }
           },
@@ -141,10 +218,7 @@
             "description": "Returns the audio file directly (e.g., Content-Type: audio/mpeg). The filename is typically the bot_id.",
             "content": {
               "audio/mpeg": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
+                "schema": { "type": "string", "format": "binary" }
               }
             }
           },
@@ -174,13 +248,7 @@
             "description": "Returns the transcript file (typically JSON).",
             "content": {
               "application/json": {
-                "example": {
-                  "transcript": [
-                    { "speaker": "Alice", "timestamp": "00:00:12", "text": "Hello everyone, thanks for joining." },
-                    { "speaker": "Bob",   "timestamp": "00:00:15", "text": "Hi Alice!" }
-                  ],
-                  "summary": "Brief discussion about project status."
-                }
+                "schema": { "$ref": "#/components/schemas/GetBotTranscriptResponse" }
               }
             }
           },
@@ -210,10 +278,7 @@
             "description": "Bot removed successfully.",
             "content": {
               "application/json": {
-                "example": {
-                  "success": true,
-                  "message": "Bot bot_123 has been removed successfully."
-                }
+                "schema": { "$ref": "#/components/schemas/RemoveBotResponse" }
               }
             }
           },
@@ -243,26 +308,7 @@
             "description": "Returns the detailed transcript with speaker information and word-level details.",
             "content": {
               "application/json": {
-                "example": [
-                  {
-                    "speaker": "John Wick",
-                    "transcript": "Hello? Hey there. Mic testing. +1, 23.",
-                    "start_time": 1.04,
-                    "end_time": 5.84,
-                    "words": [
-                      {
-                        "word": "hello",
-                        "start": 1.04,
-                        "end": 1.76,
-                        "confidence": 0.81,
-                        "speaker": "John Wick",
-                        "punctuated_word": "Hello?",
-                        "speech_confidence": 1.0
-                      }
-                    ],
-                    "speaker_confidence": 1.0
-                  }
-                ]
+                "schema": { "$ref": "#/components/schemas/GetTranscriptResponse" }
               }
             }
           },
@@ -292,7 +338,7 @@
             "description": "Returns the bot manifest information.",
             "content": {
               "application/json": {
-                "example": {}
+                "schema": { "$ref": "#/components/schemas/GetBotManifestResponse" }
               }
             }
           },
