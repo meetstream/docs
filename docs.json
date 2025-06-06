@@ -40,8 +40,13 @@
               "api-reference/endpoint/get-bot-audio",
               "api-reference/endpoint/get-bot-transcript",
               "api-reference/endpoint/remove-bot",
-              "api-reference/endpoint/get-transcript",
               "api-reference/endpoint/get-bot-manifest"
+            ]
+          },
+          {
+            "group": "Transcript Endpoints",
+            "pages": [
+              "api-reference/endpoint/get-transcript"
             ]
           }
         ]
