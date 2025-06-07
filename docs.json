@@ -11,19 +11,6 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Get Started",
-            "pages": [
-              "index",
-              "quickstart",
-              "development"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "API Reference",
         "groups": [
           {
@@ -70,5 +57,6 @@
       "label": "Dashboard",
       "href": "https://dashboard.mintlify.com"
     }
-  }
+  },
+  "homePage": "api-reference/introduction"
 }

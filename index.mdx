@@ -1,33 +1,33 @@
 ---
-title: MeetStream.AI Documentation
-description: "Unified API & infrastructure for AI meeting agents"
+title: 'Introduction'
+description: 'Overview of the Meetstream Bot API.'
 ---
 
-<img
-  className="block dark:hidden"
-  src="/images/hero-light.png"
-  alt="MeetStream.AI Hero Light"
-/>
-<img
-  className="hidden dark:block"
-  src="/images/hero-dark.png"
-  alt="MeetStream.AI Hero Dark"
-/>
+<Note>
+  Welcome to the Meetstream Bot API documentation. Here you'll find everything you need to manage and interact with meeting bots using our unified API.
+</Note>
 
-# MeetStream.AI
+## Overview
 
-MeetStream.AI provides a unified API and managed infrastructure for building, deploying, and scaling AI meeting agents. Integrate with Zoom, Google Meet, Teams, and more using a single API. Focus on your AI development while MeetStream.AI handles the complexity of meeting integrations, recording, streaming, and real-time analysis.
+The Meetstream Bot API enables you to programmatically create, control, and monitor meeting bots across major platforms. This documentation is generated from an OpenAPI specification and provides detailed information on all available endpoints.
 
-## Key Features
+<Card
+  title="Meetstream Bot API Specification"
+  icon="zap"
+  href="openapi.json"
+>
+  View the full OpenAPI specification for the Bot API.
+</Card>
 
-- Unified API for all major meeting platforms
-- Send bots to meetings with a single API request
-- Real-time audio, video, and transcript streaming
-- Accurate speaker recognition and real-time transcription
-- Effortless integration with CRMs, calendars, and PMS
-- No hosting or paid plan required
-- Works even for platforms without official APIs
+## Authentication
 
----
+All API requests require authentication via API Key. Include your API key in the `Authorization` header, prefixed with `Token`.
 
-Start building your meeting agent today with MeetStream.AI's powerful, unified API. For more details, visit [meetstream.ai](https://www.meetstream.ai/).
+**Header Example:**
+```
+Authorization: Token YOUR_API_KEY
+```
+
+You can generate and manage your API keys from your Meetstream dashboard.
+
+Authentication is defined in the OpenAPI spec as an `ApiKeyAuth` security scheme, applied globally to all endpoints.
