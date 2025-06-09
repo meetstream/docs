@@ -15,6 +15,10 @@
     {
       "name": "Bot Endpoints",
       "description": "Endpoints for managing Meetstream bots."
+    },
+    {
+      "name": "Calendar Endpoints",
+      "description": "Endpoints for managing calendar integrations."
     }
   ],
   "components": {
@@ -130,6 +134,46 @@
       "GetBotManifestResponse": {
         "type": "object",
         "description": "Manifest information for a bot."
+      },
+      "CreateCalendarRequest": {
+        "type": "object",
+        "required": ["google_client_id", "google_client_secret", "google_refresh_token"],
+        "properties": {
+          "google_client_id": {
+            "type": "string",
+            "description": "Google OAuth client ID for calendar access"
+          },
+          "google_client_secret": {
+            "type": "string",
+            "description": "Google OAuth client secret for calendar access"
+          },
+          "google_refresh_token": {
+            "type": "string",
+            "description": "Google OAuth refresh token for maintaining calendar access"
+          }
+        }
+      },
+      "CreateCalendarResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Success message"
+          },
+          "events_fetched": {
+            "type": "integer",
+            "description": "Number of events fetched"
+          },
+          "calendars_processed": {
+            "type": "integer",
+            "description": "Number of calendars processed"
+          },
+          "user_email": {
+            "type": "string",
+            "description": "Email of the user"
+          }
+        },
+        "required": ["message", "events_fetched", "calendars_processed", "user_email"]
       }
     }
   },
@@ -344,6 +388,35 @@
           },
           "401": { "description": "Unauthorized (Invalid API Key)." },
           "404": { "description": "Bot not found." },
+          "500": { "description": "Internal Server Error." }
+        }
+      }
+    },
+    "/calendar/create_calendar": {
+      "post": {
+        "tags": ["Calendar Endpoints"],
+        "summary": "Create Calendar",
+        "operationId": "createCalendar",
+        "description": "Creates a new calendar configuration with Google Calendar integration",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateCalendarRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Calendar created successfully and events fetched.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreateCalendarResponse" }
+              }
+            }
+          },
+          "400": { "description": "Bad Request (e.g., missing required fields, invalid credentials)." },
+          "401": { "description": "Unauthorized (Invalid API Key)." },
           "500": { "description": "Internal Server Error." }
         }
       }

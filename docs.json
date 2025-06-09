@@ -22,11 +22,11 @@
           {
             "group": "Bot Endpoints",
             "pages": [
-              "api-reference/endpoint/create-bot",
+              "api-reference/endpoint/post-create-bot",
               "api-reference/endpoint/get-bot-status",
               "api-reference/endpoint/get-bot-audio",
               "api-reference/endpoint/get-bot-transcript",
-              "api-reference/endpoint/remove-bot",
+              "api-reference/endpoint/get-remove-bot",
               "api-reference/endpoint/get-bot-manifest"
             ]
           },
@@ -34,6 +34,12 @@
             "group": "Transcript Endpoints",
             "pages": [
               "api-reference/endpoint/get-transcript"
+            ]
+          },
+          {
+            "group": "Calendar Endpoints",
+            "pages": [
+              "api-reference/endpoint/post-create-calendar"
             ]
           }
         ]
