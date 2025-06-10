@@ -11,6 +11,24 @@
   "navigation": {
     "tabs": [
       {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "guides/index"
+            ]
+          },
+          {
+            "group": "Bot Integration",
+            "pages": [
+              "guides/zoom-bot-guide",
+              "guides/zoom-bot-guide-2"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "API Reference",
         "groups": [
           {
@@ -64,5 +82,5 @@
       "href": "https://dashboard.mintlify.com"
     }
   },
-  "homePage": "api-reference/introduction"
+  "homePage": "guides/index"
 }

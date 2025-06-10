@@ -1,0 +1,167 @@
+---
+title: 'Zoom Bot Implementation Guide - Step 2'
+description: 'Complete guide to implementing Zoom bots with MeetStream. Learn how to create your first bot, configure credentials, and handle common scenarios.'
+---
+
+# Zoom Bot Implementation Guide - Step 2
+
+## Complete Zoom Bot Setup with MeetStream
+
+Complete guide to implementing Zoom bots with MeetStream. Learn how to create your first bot, configure credentials, and handle common scenarios.
+<Note>
+  **Prerequisites:** Before starting, ensure you have created a MeetStream account and a Zoom app in Zoom's marketplace. If you haven't created a Zoom app yet, follow the steps in Step 1.
+</Note>
+
+<Warning>
+  **Important:** At this stage, Zoom bots can only join meetings hosted by the user or organization that owns the Zoom app.
+</Warning>
+
+<Steps>
+  <Step title="Get your Zoom app's credentials">
+    Retrieve your development credentials from the Zoom Marketplace Dashboard.
+
+    1. **Navigate to Zoom Marketplace Dashboard**
+       
+       Head to the Zoom Marketplace Dashboard and find your app under managed apps
+
+    2. **Access App Credentials**
+       
+       Click on the 'Basic Information' tab and locate the 'App Credentials' section to find your development credentials
+
+    <Frame>
+      <img src="/images/zoom-screenshots/step-4.png" alt="Zoom App Marketplace credentials section" />
+    </Frame>
+  </Step>
+
+  <Step title="Add the credentials to the MeetStream Dashboard">
+    Configure your Zoom SDK credentials in the dashboard.
+
+    1. **Access MeetStream Dashboard**
+       
+       Navigate to the Zoom SDK Credentials section in your dashboard sidebar
+
+    2. **Configure Credentials**
+       
+       Add your Zoom app credentials from Step 1 to enable bot functionality
+
+    <Frame>
+      <img src="/images/zoom-screenshots/step-5.png" alt="MeetStream Dashboard Zoom credentials" />
+    </Frame>
+  </Step>
+
+  <Step title="Create a bot">
+    Use the Create Bot API to deploy your first Zoom bot. 
+
+    <Card title="API Documentation" href="/api-reference/endpoint/post-create-bot" icon="book">
+      For full API details, see the Bot API documentation
+    </Card>
+
+    **Endpoint:** `POST /bots/create_bot`
+    
+    Creates a new bot instance to join a meeting.
+
+    **Authentication:** Requires API Key authentication (`Header: Authorization: Token YOUR_API_KEY`)
+
+    <CodeGroup>
+      ```bash cURL
+      curl -X POST "https://api.meestream.ai/v1/bots/create_bot" \
+        -H "Authorization: Token YOUR_API_KEY" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "meeting_link": "",
+          "bot_name": "",
+          "bot_message": "",
+          "live_audio_required": {
+            "websocket_url": ""
+          },
+          "live_transcription_required": {
+            "webhook_url": ""
+          },
+          "custom_attributes": {
+            "tag": "",
+            "sample": ""
+          },
+          "callback_url": ""
+        }'
+      ```
+
+      ```json Request Body
+      {
+        "meeting_link": "",
+        "bot_name": "",
+        "bot_message": "",
+        "live_audio_required": {
+          "websocket_url": ""
+        },
+        "live_transcription_required": {
+          "webhook_url": ""
+        },
+        "custom_attributes": {
+          "tag": "",
+          "sample": ""
+        },
+        "callback_url": ""
+      }
+      ```
+    </CodeGroup>
+
+    **Possible Responses:**
+    - **201:** Bot creation initiated successfully. Returns `{ bot_id: string }`
+    - **400:** Bad Request (e.g., missing fields, invalid meeting link)
+    - **401:** Unauthorized (Invalid API Key)
+    - **500:** Internal Server Error
+
+    <Tip>
+      **Pro tip:** If a bot is denied recording permissions, you should signal this to the host to prevent lost recording opportunities. Set `recording_permission_denied_timeout` to automatically leave after 5 seconds if denied permissions.
+    </Tip>
+  </Step>
+
+  <Step title="View your bot in the API Explorer">
+    Monitor and debug your bot using the dashboard's Bot Explorer.
+
+    1. **Access Bot Explorer**
+       
+       Navigate to the "Bots" section in your dashboard to access the Bot explorer
+
+    2. **Find Your Bot**
+       
+       Locate the bot you just created and click the 'view' button to access detailed information
+
+    3. **Debug and Monitor**
+       
+       Access bot details, debugging tools, live screenshots, and more to monitor your bot's performance
+
+    <Frame>
+      <img src="/images/zoom-screenshots/step-6.png" alt="MeetStream Bot Explorer interface" />
+    </Frame>
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Bot fails to join Zoom meeting">
+    **Common causes:**
+    - Meeting link is invalid or expired
+    - Zoom app credentials are in development mode (only works for meetings hosted by app owner)
+    - Meeting requires waiting room approval
+    - Meeting has password protection not handled by the bot
+  </Accordion>
+
+  <Accordion title="No audio or transcript available">
+    **Check these settings:**
+    - Ensure audio is enabled in bot creation request
+    - Verify meeting participants are speaking
+    - Check if meeting host has enabled audio permissions for bots
+    - Wait for processing time after meeting ends
+  </Accordion>
+
+  <Accordion title="API authentication errors">
+    **Verify:**
+    - API key is correct and active
+    - Authorization header format: `Token YOUR_API_KEY`
+    - Account has sufficient permissions
+    - API quotas not exceeded
+  </Accordion>
+</AccordionGroup>
+

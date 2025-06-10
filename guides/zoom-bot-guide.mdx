@@ -1,0 +1,81 @@
+---
+title: 'Zoom Bot Implementation Guide'
+description: 'Step-by-step guide to set up your Zoom app integration with Meetstream'
+---
+
+# Zoom Bot Implementation Guide
+
+## Step 1: Set up your Zoom app in the Zoom App Marketplace
+
+Follow the steps below to get started.
+
+<Steps>
+  <Step title="Login to the Zoom App Marketplace">
+    Sign in or sign up for Zoom's App Marketplace to get started with creating your bot integration.
+
+    <Card title="Open Zoom App Marketplace" href="https://marketplace.zoom.us/" icon="external-link">
+      Access the Zoom App Marketplace to begin creating your integration
+    </Card>
+
+    <Note>
+      **Service Account Recommendation**
+      
+      Create the app under a Zoom account that isn't tied to any particular user to avoid ownership issues later.
+    </Note>
+  </Step>
+
+  <Step title="Create a new app">
+    Once signed in, navigate to the development section and create a new app.
+
+    Follow these steps:
+    1. Click on the "Develop" tab
+    2. Select "Build App"
+    3. Choose "General" app type (unless you have a specific use case)
+
+    <Frame>
+      <img src="/images/zoom-screenshots/step-1.png" alt="Zoom App Marketplace - Click on 'Develop' tab and then 'Build App'" />
+    </Frame>
+  </Step>
+
+  <Step title="Configure your new Zoom app">
+    **Choose App Management Type**
+    
+    Select how your users will manage your app permissions:
+
+    <CardGroup cols={2}>
+      <Card title="User-managed" icon="user">
+        Individual users grant permissions to access their personal Zoom data. Similar to how apps request access to Gmail or Google Drive.
+      </Card>
+      
+      <Card title="Admin-managed" icon="shield">
+        Organization admins grant permissions for the entire organization. Similar to G Suite admin granting domain-wide permissions.
+      </Card>
+    </CardGroup>
+
+    <Frame>
+      <img src="/images/zoom-screenshots/step-2.png" alt="Choose 'User-managed' or 'Admin-managed' app type" />
+    </Frame>
+  </Step>
+
+  <Step title="Get your Zoom App Credentials">
+    Retrieve your development credentials to integrate with the Meetstream platform.
+
+    1. Go back to the "Basic Information" tab
+    2. Find the "App Credentials" section
+    3. Copy your development credentials
+
+    <Frame>
+      <img src="/images/zoom-screenshots/step-3.png" alt="Copy your development credentials" />
+    </Frame>
+
+    <Warning>
+      **Development vs Production**
+      
+      Your Zoom credentials default to "development" which only works for meetings hosted by the user or organization that owns the app. For production use across external meetings, your app must be submitted and approved by Zoom.
+    </Warning>
+  </Step>
+</Steps>
+
+## Next: Step 2
+
+Continue with the next step of the implementation process to complete your Zoom bot setup. 
