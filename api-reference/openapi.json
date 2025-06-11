@@ -174,6 +174,45 @@
           }
         },
         "required": ["message", "events_fetched", "calendars_processed", "user_email"]
+      },
+      "GetBotChatsResponse": {
+        "type": "object",
+        "properties": {
+          "download_url": {
+            "type": "string",
+            "description": "URL to download the chats file"
+          },
+          "expires_in": {
+            "type": "integer",
+            "description": "Time in seconds until the download URL expires"
+          },
+          "file_type": {
+            "type": "string",
+            "description": "Type of the file containing the chats"
+          }
+        },
+        "required": ["download_url", "expires_in", "file_type"]
+      },
+      "GetBotScreenshotsResponse": {
+        "type": "object",
+        "properties": {
+          "bot_id": {
+            "type": "string",
+            "description": "The unique identifier of the bot"
+          },
+          "screenshots_count": {
+            "type": "integer",
+            "description": "Number of screenshots available"
+          },
+          "screenshots": {
+            "type": "array",
+            "description": "List of screenshot URLs or objects",
+            "items": {
+              "type": "string"
+            }
+          } 
+        },
+        "required": ["bot_id", "screenshots_count", "screenshots"]
       }
     }
   },
@@ -418,6 +457,60 @@
           "400": { "description": "Bad Request (e.g., missing required fields, invalid credentials)." },
           "401": { "description": "Unauthorized (Invalid API Key)." },
           "500": { "description": "Internal Server Error." }
+        }
+      }
+    },
+    "/bots/{bot_id}/get_chats":{
+      "get": {
+        "tags": ["Bot Endpoints"],
+        "summary": "Get Bot Chats",
+        "operationId": "getBotChats",
+        "description": "Retrieves the chats for a specific bot.",
+        "parameters": [
+          {
+            "name": "bot_id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the bot.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the chats for the bot.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetBotChatsResponse" }
+              }
+            }
+          }
+        }
+      },
+      "/bots/{bot_id}/get_screenshots": {
+        "get": {
+          "tags": ["Bot Endpoints"],
+          "summary": "Get Bot Screenshots",
+          "operationId": "getBotScreenshots",
+          "description": "Retrieves the screenshots for a specific bot.",
+          "parameters": [
+            {
+              "name": "bot_id",
+              "in": "path",
+              "required": true,
+              "description": "The unique identifier of the bot.",
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Returns the screenshots for the bot.",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/GetBotScreenshotsResponse" }
+                }
+              }
+            }
+          }
         }
       }
     }
