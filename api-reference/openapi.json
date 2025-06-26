@@ -485,29 +485,30 @@
             }
           }
         }
-      },
-      "/bots/{bot_id}/get_screenshots": {
-        "get": {
-          "tags": ["Bot Endpoints"],
-          "summary": "Get Bot Screenshots",
-          "operationId": "getBotScreenshots",
-          "description": "Retrieves the screenshots for a specific bot.",
-          "parameters": [
-            {
-              "name": "bot_id",
-              "in": "path",
-              "required": true,
-              "description": "The unique identifier of the bot.",
-              "schema": { "type": "string" }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Returns the screenshots for the bot.",
-              "content": {
-                "application/json": {
-                  "schema": { "$ref": "#/components/schemas/GetBotScreenshotsResponse" }
-                }
+      }
+     
+    },
+    "/bots/{bot_id}/get_screenshots": {
+      "get": {
+        "tags": ["Bot Endpoints"],
+        "summary": "Get Bot Screenshots",
+        "operationId": "getBotScreenshots",
+        "description": "Retrieves the screenshots for a specific bot.",
+        "parameters": [
+          {
+            "name": "bot_id",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the bot.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the screenshots for the bot.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetBotScreenshotsResponse" }
               }
             }
           }
