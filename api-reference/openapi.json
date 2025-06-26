@@ -131,9 +131,9 @@
           }
         }
       },
-      "GetBotManifestResponse": {
+      "GetBotSpeakerTimelineResponse": {
         "type": "object",
-        "description": "Manifest information for a bot."
+        "description": "Speaker timeline information for a bot."
       },
       "CreateCalendarRequest": {
         "type": "object",
@@ -401,12 +401,12 @@
         }
       }
     },
-    "/bots/{bot_id}/get_manifest": {
+    "/bots/{bot_id}/get_speaker_timeline": {
       "get": {
         "tags": ["Bot Endpoints"],
-        "summary": "Get Bot Manifest",
-        "operationId": "getBotManifest",
-        "description": "Retrieves the manifest information for a specific bot.",
+        "summary": "Get Bot Speaker Timeline",
+        "operationId": "getBotSpeakerTimeline",
+        "description": "Retrieves the speaker timeline information for a specific bot.",
         "parameters": [
           {
             "name": "bot_id",
@@ -418,10 +418,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns the bot manifest information.",
+            "description": "Returns the bot speaker timeline information.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/GetBotManifestResponse" }
+                "schema": { "$ref": "#/components/schemas/GetBotSpeakerTimelineResponse" }
               }
             }
           },

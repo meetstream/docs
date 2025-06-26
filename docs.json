@@ -45,7 +45,7 @@
               "api-reference/endpoint/get-bot-audio",
               "api-reference/endpoint/get-bot-transcript",
               "api-reference/endpoint/get-remove-bot",
-              "api-reference/endpoint/get-bot-manifest",
+              "api-reference/endpoint/get-bot-speaker-timeline",
               "api-reference/endpoint/get-bot-chat",
               "api-reference/endpoint/get-bot-screenshot"
             ]
