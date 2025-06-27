@@ -72,16 +72,11 @@
     "text": "Meestream.ai"
   },
   "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
+
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "href": "https://app.meetstream.ai/"
     }
   },
   "homePage": "guides/index"
