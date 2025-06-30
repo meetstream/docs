@@ -79,5 +79,10 @@
       "href": "https://app.meetstream.ai/"
     }
   },
-  "homePage": "guides/index"
+  "homePage": "guides/index",
+  "integrations": {
+    "gtm": {
+      "tagId": "GTM-W3C8TD23"
+    }
+  }
 }
