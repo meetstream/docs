@@ -22,8 +22,15 @@
           {
             "group": "Bot Integration",
             "pages": [
-              "guides/zoom-bot-guide",
-              "guides/zoom-bot-guide-2"
+              "guides/zoom/zoom-bot-guide",
+              "guides/zoom/zoom-bot-guide-2"
+            ]
+          },
+          {
+            "group": "Google Calendar Integration",
+            "pages": [
+              "guides/google-calendar/calendar-integration",
+              "guides/google-calendar/google-calendar-oauth"
             ]
           }
         ]

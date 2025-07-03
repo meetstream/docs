@@ -1,0 +1,228 @@
+# Google Calendar OAuth 2.0 Setup
+
+## Setup OAuth 2.0 Client
+
+1. **Create a Google OAuth 2.0 client ID** by following the steps in the [Google API Console OAuth 2.0 setup guide](https://support.google.com/googleapi/answer/6158849?hl=en). Once created, copy your `CLIENT_ID` and `CLIENT_SECRET` values.
+
+2. **[Ensure Google Calendar API](https://support.google.com/googleapi/answer/6158841) is enabled** for the project.
+
+3. **Configure permission scopes** to at least include:
+   - `calendar.events.readonly`
+   - `userinfo.email`
+   
+   Configure these in the OAuth Consent Screen section.
+
+4. **Add Authorized redirect URI** in the Credentials section: `https://your-domain.com/auth/google/callback`
+
+## Implement OAuth 2.0 Authorization Code Flow
+
+### Step 1: Generate Authorization URL
+
+Create an endpoint that generates the Google OAuth authorization URL:
+
+**Endpoint:** `POST /api/auth/google/url`
+
+**Request Body:**
+```json
+{
+  "oauth_client_id": "your_google_client_id",
+  "oauth_client_secret": "your_google_client_secret"
+}
+```
+
+**Implementation Example:**
+```javascript
+// Initialize OAuth2 client
+const oauth2Client = new OAuth2Client(
+  oauth_client_id,
+  oauth_client_secret,
+  `https://your-domain.com/auth/google/callback` // Generic redirect URI
+);
+
+// Define required scopes
+const scopes = [
+  'https://www.googleapis.com/auth/calendar.events.readonly',
+  'https://www.googleapis.com/auth/calendar.readonly',
+  'https://www.googleapis.com/auth/userinfo.email',
+  'https://www.googleapis.com/auth/userinfo.profile'
+];
+
+// Generate authorization URL
+const authUrl = oauth2Client.generateAuthUrl({
+  access_type: 'offline',    // Essential for refresh token
+  scope: scopes,
+  prompt: 'consent',         // Forces consent screen
+  include_granted_scopes: true
+});
+```
+
+**Response:**
+```json
+{
+  "auth_url": "https://accounts.google.com/o/oauth2/auth?client_id=...",
+  "instructions": "Visit this URL to authorize the application and get the authorization code"
+}
+```
+
+### Step 2: Handle OAuth Callback
+
+When users authorize your application, Google redirects them to your callback URL with either an authorization code or an error.
+
+**Endpoint:** `GET /auth/google/callback`
+
+**Query Parameters:**
+- `code` - Authorization code (on success)
+- `error` - Error description (on failure)
+
+**Implementation Example:**
+```javascript
+// Extract parameters from callback URL
+const code = request.query.code;
+const error = request.query.error;
+
+// Handle authorization errors
+if (error) {
+  return {
+    error: 'oauth_error',
+    message: `OAuth authorization failed: ${error}`
+  };
+}
+
+// Validate authorization code exists
+if (!code) {
+  return {
+    error: 'missing_code',
+    message: 'Authorization code not found in callback'
+  };
+}
+
+// Display success page with authorization code
+return `
+  <h1>Authorization Successful!</h1>
+  <p>Authorization code: <code>${code}</code></p>
+  <p>Use this code to exchange for tokens.</p>
+`;
+```
+
+
+### Step 3: Exchange Authorization Code for Tokens
+
+**Endpoint:** `POST /api/auth/google/exchange-token`
+
+**Request Body:**
+```json
+{
+  "oauth_client_id": "your_google_client_id",
+  "oauth_client_secret": "your_google_client_secret",
+  "authorization_code": "4/0AX4XfWh..."
+}
+```
+
+**Implementation Example:**
+```javascript
+// Initialize OAuth2 client with same redirect URI
+const oauth2Client = new OAuth2Client(
+  oauth_client_id,
+  oauth_client_secret,
+  `https://your-domain.com/auth/google/callback`
+);
+
+// Exchange authorization code for tokens
+const { tokens } = await oauth2Client.getToken(authorization_code);
+
+// Validate refresh token was received
+if (!tokens.refresh_token) {
+  return {
+    error: 'no_refresh_token',
+    message: 'No refresh token received. Ensure access_type=offline and prompt=consent were used.'
+  };
+}
+```
+
+**Success Response:**
+```json
+{
+  "success": true,
+  "oauth_refresh_token": "1//04_Tc-Z9dxhiCgYIARAAGAQSNwF...",
+  "access_token": "ya29.a0ARrdaM9H7_JKLMNqr8xYz...",
+  "expiry_date": 1672531200000,
+  "token_type": "Bearer",
+  "scope": "https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/userinfo.email",
+  "message": "Refresh token obtained successfully!",
+  "next_step": {
+    "endpoint": "/api/calendar/auth",
+    "method": "POST",
+    "body": {
+      "oauth_client_id": "your_client_id",
+      "oauth_client_secret": "your_client_secret",
+      "oauth_refresh_token": "1//04_Tc-Z9dxhiCgYIARAAGAQSNwF..."
+    }
+  }
+}
+```
+
+**Error Handling Examples:**
+```json
+// Invalid or expired authorization code
+{
+  "error": "invalid_authorization_code",
+  "message": "The authorization code is invalid or expired."
+}
+
+// Missing required parameters
+{
+  "error": "Missing required parameters",
+  "message": "oauth_client_id, oauth_client_secret, and authorization_code are required."
+}
+```
+
+### Step 4: Using the Refresh Token
+
+Store the `oauth_refresh_token` securely. This long-lived token allows you to:
+
+**Generate Access Tokens:**
+```javascript
+// Set refresh token
+oauth2Client.setCredentials({
+  refresh_token: stored_refresh_token
+});
+
+// Generate new access token
+const { credentials } = await oauth2Client.refreshAccessToken();
+const access_token = credentials.access_token;
+```
+
+**Access Calendar API:**
+```javascript
+// Initialize Calendar API
+const calendar = google.calendar({ 
+  version: 'v3', 
+  auth: oauth2Client 
+});
+
+// List user's calendars
+const response = await calendar.calendarList.list();
+```
+
+## Important Configuration Notes
+
+1. **Redirect URI Consistency**: Use the same redirect URI across all steps:
+   - OAuth client configuration in Google Console
+   - Authorization URL generation
+   - Token exchange endpoint
+
+2. **Refresh Token Requirements**:
+   - `access_type: 'offline'` - Required for refresh token
+   - `prompt: 'consent'` - Forces consent screen to ensure refresh token
+   - First-time authorization only - subsequent authorizations may not return refresh token
+
+3. **Security Considerations**:
+   - Store client credentials securely (environment variables)
+   - Validate all input parameters
+   - Use HTTPS for all endpoints
+   - Store refresh tokens securely (encrypted database)
+
+For detailed implementation instructions, refer to the official Google documentation:
+
+[OAuth 2.0 Web Server Applications - Obtaining Access Tokens](https://developers.google.com/identity/protocols/oauth2/web-server#obtainingaccesstokens)
+

@@ -1,0 +1,31 @@
+# Google Calendar Integration Guide
+
+## Overview
+
+This guide will walk you through the process of integrating Google Calendar with MeetStream.ai.
+
+
+# Step 1: Create MeetStream API Key
+
+Create an api-key in the [MeetStream Dashboard](https://dashboard.meetstream.ai/api-keys).
+
+# Step 2: Setup Google Calendar OAuth 2.0 Client
+
+Setup the Google Calendar OAuth 2.0 Client by following the steps in the [Google Calendar OAuth 2.0 Setup](/guides/google-calendar/google-calendar-oauth) guide.
+
+# Step 3: Implement OAuth 2.0 Authorization Flow
+
+At this point you should implement the OAuth 2.0 authorization code flow in your system.
+- Redirect the user to the authorization endpoint for a specific provider.
+- Receive a callback from the provider on successful connect.
+- Use the authorization code to retrieve a refresh_token. Refer to the [Google Calendar OAuth 2.0 Setup](/guides/google-calendar/google-calendar-oauth) guide for more details.
+
+# Step 4: Create Calendar Integration
+
+Create a calendar using the [/create-calendar](/api-reference/endpoint/post-create-calendar) endpoint.
+
+At this point the bots will be automatiically scheduled to all the events linked to the google account. A list of the events will be available in the [Dashboard](https://dashboard.meetstream.ai/calendars)
+
+<img src="/images/guides/calendar/dashboard_calendar.png" alt="Google Calendar Integration" />
+
+In this dashboard you can toggle the sheduled bots on or off 
